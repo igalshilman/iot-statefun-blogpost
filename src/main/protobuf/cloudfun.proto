@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package io.battlefun;
+option java_package = "io.cloudfun.generated";
+option java_multiple_files = true;
+
+import "google/protobuf/descriptor.proto";
+
+// -------------------------------------------------------------------------------------------------------------------
+// Metrics sent from the Physical server to the Server Stateful Function
+// -------------------------------------------------------------------------------------------------------------------
+
+message ServerMetricReport {
+    string server_id = 100;
+
+    double cpu_percent_nanoseconds_idle = 1;
+    double cpu_percent_nanoseconds_nice = 2;
+    double cpu_percent_nanoseconds_interrupt = 3;
+    double cpu_percent_nanoseconds_softirq = 4;
+    double cpu_percent_nanoseconds_steal = 5;
+    double cpu_percent_nanoseconds_system = 6;
+    double cpu_percent_nanoseconds_user = 7;
+    double cpu_percent_nanoseconds_wait = 8;
+    double interface_if_dropped_in = 9;
+    double interface_if_errors_in = 10;
+    double interface_if_octets_in = 11;
+    double interface_if_packets_in = 12;
+    double interface_if_dropped_out = 13;
+    double interface_if_errors_out = 14;
+    double interface_if_octets_out = 15;
+    double interface_if_packets_out = 16;
+    double memory_memory_buffered = 17;
+    double memory_memory_cached = 18;
+    double memory_memory_free = 19;
+    double memory_memory_slab_recl = 20;
+    double memory_memory_slab_unrecl = 21;
+    double memory_memory_total = 22;
+    double memory_memory_used = 23;
+    double disk_disk_io_time_io_time = 24;
+    double disk_disk_io_time_weighted_io_time = 25;
+    double disk_disk_merged_read = 26;
+    double disk_disk_merged_write = 27;
+    double disk_disk_octects_read = 28;
+    double disk_disk_octects_write = 29;
+    double disk_disk_ops_read = 30;
+    double disk_disk_ops_write = 31;
+    double disk_disk_time_read = 32;
+    double disk_disk_time_write = 33;
+    double processes_ps_state_blocked = 34;
+    double processes_ps_state_paging = 35;
+    double processes_ps_state_running = 36;
+    double processes_ps_state_sleeping = 37;
+    double processes_ps_state_stopped = 38;
+    double processes_ps_state_zombies = 39;
+    double memory_and_cache_memory_bandwidth_local = 40;
+    double memory_and_cache_memory_bandwidth_remote = 41;
+    double memory_and_cache_bytes_llc = 42;
+    double memory_exceptions_errors_corrected_memory_errors = 43;
+    double memory_exceptions_errors_uncorrected_memory_error = 44;
+    double memory_throttling_sensor = 45;
+    double ipmi_voltage = 50;
+    double ipmi_temperature_agg = 52;
+    double ipmi_airflow = 53;
+    double ipmi_watts_input_power = 54;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// ServerFun Internal State (in real world application this would probably be in a separate file)
+// -------------------------------------------------------------------------------------------------------------------
+
+message ServerState {
+    enum Status {
+        UNKNOWN = 0;
+        OK = 1;
+        NOK = 2;
+    }
+
+    string rack_id = 1;
+    string server_id = 2;
+    int64 last_reported = 3;
+    Status status = 4;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// RackFun Internal State (in real world application this would probably be in a separate file)
+// -------------------------------------------------------------------------------------------------------------------
+message PerServerOpenIncidents {
+    repeated int32 type = 1;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// Ingress Messages
+// -------------------------------------------------------------------------------------------------------------------
+
+message CommissionServer {
+    string rack_id = 1;
+    string server_id = 2;
+}
+
+message DecommissionServer {
+    string rack_id = 1;
+    string server_id = 2;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// Internal Messages
+// -------------------------------------------------------------------------------------------------------------------
+
+message Timer {
+}
+
+message Ok {
+}
+
+message Incident {
+    int32 type = 1;
+    int32 severity = 2;
+    int32 category = 3;
+    string context = 4;
+}
+
+message RackAlert {
+    string rack_id = 1;
+}
+
+message DataCenterAlert {
+    string data_center_id = 1;
+}
+
+message GetUnhealthyRacks {
+    string data_center = 1;
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+// Egresses Messages
+// -------------------------------------------------------------------------------------------------------------------
+
+message ServerAlert {
+    string server_id = 1;
+    string rack_id = 2;
+    repeated Incident incident = 3;
+}
+
+message UnhealthyRacks {
+    string data_center = 1;
+    repeated string rack_id = 2;
+}
+
